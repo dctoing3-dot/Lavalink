@@ -1,0 +1,44 @@
+server:
+  port: ${PORT:-2333}
+  address: 0.0.0.0
+
+lavalink:
+  server:
+    password: ${LAVALINK_PASSWORD:youshallnotpass}
+    sources:
+      youtube: true
+      bandcamp: true
+      soundcloud: true
+      twitch: true
+      vimeo: true
+      http: true
+      local: false
+    
+    # Optimize untuk free tier (512MB RAM)
+    bufferDurationMs: 200
+    frameBufferDurationMs: 1000
+    youtubePlaylistLoadLimit: 3
+    playerUpdateInterval: 5
+    youtubeSearchEnabled: true
+    soundcloudSearchEnabled: true
+    gc-warnings: true
+
+metrics:
+  prometheus:
+    enabled: false
+
+sentry:
+  dsn: ""
+
+logging:
+  level:
+    root: INFO
+    lavalink: INFO
+
+  file:
+    path: ./logs/
+
+  logback:
+    rollingpolicy:
+      max-file-size: 10MB
+      max-history: 3
