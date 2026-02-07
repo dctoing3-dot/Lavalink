@@ -3,10 +3,20 @@ services:
     name: lavalink-server
     env: docker
     plan: free
+    region: singapore  # Pilih region terdekat
+    
     healthCheckPath: /version
+    
     envVars:
       - key: LAVALINK_PASSWORD
-        generateValue: true
+        value: your_super_strong_password_here
       - key: PORT
         value: 2333
+      - key: JAVA_OPTS
+        value: "-Xmx350M -Xms128M"
+    
     autoDeploy: true
+    
+    # Build dari Docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: ./
