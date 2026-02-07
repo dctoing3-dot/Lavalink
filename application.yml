@@ -16,7 +16,7 @@ lavalink:
     password: ${LAVALINK_PASSWORD:your_super_strong_password_here}
     
     sources:
-      youtube: false        # MUST be false for plugin
+      youtube: false
       bandcamp: true
       soundcloud: true
       twitch: true
@@ -24,7 +24,6 @@ lavalink:
       http: true
       local: false
     
-    # Audio quality settings
     bufferDurationMs: 400
     frameBufferDurationMs: 2000
     youtubePlaylistLoadLimit: 5
@@ -34,54 +33,40 @@ lavalink:
     gc-warnings: true
     trackStuckThresholdMs: 10000
     useSeekGhosting: true
-    
-    # Audio codec settings (FIX untuk tidak ada suara)
-    audioCodecs:
-      - opus
-      - vorbis
-      - aac
-      - mp3
-      - flac
-    
-    # Filter configuration
-    filters:
-      volume: true
-      equalizer: true
-      karaoke: true
-      timescale: true
-      tremolo: true
-      vibrato: true
-      distortion: true
-      rotation: true
-      channelMix: true
-      lowPass: true
 
 plugins:
   youtube:
     enabled: true
     allowSearch: true
-    allowDirectVideoIds: true        # FIX untuk YouTube URLs
+    allowDirectVideoIds: true
     allowDirectPlaylistIds: true
     
-    # Process all YouTube URL formats
+    # TRY ALL AVAILABLE CLIENTS untuk fix playback
     clients:
-      - MUSIC
-      - WEB  
-      - ANDROID_MUSIC
-      - WEB_EMBEDDED_PLAYER          # Untuk embedded links
-      - TVHTML5_SIMPLY_EMBEDDED_PLAYER
+      - MUSIC                            # YouTube Music - paling stabil
+      - ANDROID_MUSIC                    # Android YouTube Music
+      - ANDROID_VR                       # Android VR client
+      - WEB                              # Web client
+      - MWEB                             # Mobile Web
+      - TVHTML5_SIMPLY_EMBEDDED_PLAYER   # TV Embedded
+      - IOS                              # iOS client
+      - ANDROID                          # Android app
     
-    # URL handling
-    urlParsing:
-      enabled: true
-      parseShortUrls: true            # Support youtu.be
-      parseMusicUrls: true            # Support music.youtube.com
+    # IMPORTANT: Disable signature scraping issues
+    signatureCipher:
+      disableOnError: true              # Akan skip ke client lain jika error
     
-    cache:
-      enabled: true
-      directory: /tmp/youtube-cache
-      maximumSize: 100
-      expireAfterAccess: 10m
+    # POToken untuk bypass bot detection (EXPERIMENTAL)
+    # Uncomment jika masih bermasalah
+    # pot:
+    #   enabled: true
+    
+    # OAuth untuk bypass rate limit (OPTIONAL)
+    oauth:
+      enabled: false
+      # Jika mau enable, generate refresh token dari:
+      # https://github.com/lavalink-devs/youtube-source#oauth-integration
+      # refreshToken: ""
 
   lavasrc:
     providers:
@@ -107,9 +92,15 @@ plugins:
       playlistLoadLimit: 5
       albumLoadLimit: 5
 
+metrics:
+  prometheus:
+    enabled: false
+
+sentry:
+  dsn: ""
+
 logging:
   level:
     root: INFO
     lavalink: INFO
-    dev.lavalink.youtube: DEBUG      # Debug untuk YouTube issues
-    com.sedmelluq.discord.lavaplayer: DEBUG  # Debug untuk audio issues
+    dev.lavalink.youtube: DEBUG
