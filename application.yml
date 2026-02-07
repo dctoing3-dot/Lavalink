@@ -2,17 +2,12 @@ server:
   port: ${PORT:-2333}
   address: 0.0.0.0
 
-# ============================================
-# LAVALINK PLUGINS - VERSI TERBARU FEB 2026
-# ============================================
 lavalink:
   plugins:
-    # YouTube Plugin - TERBARU v1.16.0
     - dependency: "dev.lavalink.youtube:youtube-plugin:1.16.0"
       repository: "https://maven.lavalink.dev/releases"
       snapshot: false
     
-    # LavaSrc Plugin - TERBARU v4.8.0
     - dependency: "com.github.topi314.lavasrc:lavasrc-plugin:4.8.0"
       repository: "https://maven.lavalink.dev/releases"
       snapshot: false
@@ -20,8 +15,7 @@ lavalink:
   server:
     password: ${LAVALINK_PASSWORD:your_super_strong_password_here}
     sources:
-      # Built-in sources
-      youtube: false        # HARUS false, pakai plugin!
+      youtube: false
       bandcamp: true
       soundcloud: true
       twitch: true
@@ -29,7 +23,6 @@ lavalink:
       http: true
       local: false
     
-    # Optimization untuk Render free tier
     bufferDurationMs: 400
     frameBufferDurationMs: 2000
     youtubePlaylistLoadLimit: 5
@@ -40,7 +33,6 @@ lavalink:
     trackStuckThresholdMs: 10000
     useSeekGhosting: true
     
-    # Rate limit config
     ratelimit:
       ipBlocks: []
       excludedIps: []
@@ -49,99 +41,52 @@ lavalink:
       retryLimit: 3
 
 # ============================================
-# PLUGIN CONFIGURATIONS - UPDATED
+# PLUGIN CONFIGURATIONS - FIXED
 # ============================================
 plugins:
-  # YouTube Plugin Configuration
   youtube:
     enabled: true
     allowSearch: true
     allowDirectVideoIds: true
     allowDirectPlaylistIds: true
-    
-    # Clients untuk fallback (IMPROVED di v1.16.0)
     clients:
-      - MUSIC           # YouTube Music (recommended)
-      - WEB             # YouTube Web
-      - ANDROID_TESTSUITE  # Android client
-      - TVHTML5EMBEDDED    # TV client
-    
-    # OAuth untuk menghindari rate limit (opsional)
-    oauth:
-      enabled: false
-      # refreshToken: ""
-      # skipInitialization: false
+      - MUSIC
+      - WEB
+      - ANDROID_TESTSUITE
+      - TVHTML5EMBEDDED
   
-  # LavaSrc Configuration - UPDATED v4.8.0
   lavasrc:
     providers:
-      - "ytsearch:\"%ISRC%\""   # Cari via ISRC code
-      - "ytsearch:%QUERY%"      # Fallback ke YouTube search
+      - "ytsearch:\"%ISRC%\""
+      - "ytsearch:%QUERY%"
     
     sources:
       spotify: true
       applemusic: true
-      deezer: true
+      deezer: false          # ← DISABLED untuk avoid error
       yandexmusic: false
       flowerytts: false
       vkmusic: false
     
-    # Spotify Configuration (Tanpa credentials untuk basic)
     spotify:
       countryCode: "ID"
       playlistLoadLimit: 5
       albumLoadLimit: 5
-      # clientId: ""       # Opsional
-      # clientSecret: ""   # Opsional
-      # localFiles: false  # NEW in v4.8.0
     
-    # Deezer Configuration
-    deezer:
-      countryCode: "ID"
-      # masterDecryptionKey: ""  # Opsional untuk HQ
-    
-    # Apple Music Configuration
     applemusic:
       countryCode: "ID"
       mediaAPIToken: ""
       playlistLoadLimit: 5
       albumLoadLimit: 5
-    
-    # YouTube Search (NEW in LavaSrc v4.8.0)
-    youtube:
-      countryCode: "ID"
-      language: "id"
 
-# ============================================
-# METRICS & MONITORING
-# ============================================
 metrics:
   prometheus:
     enabled: false
-    endpoint: /metrics
 
-# ============================================
-# SENTRY
-# ============================================
 sentry:
   dsn: ""
-  environment: "production"
 
-# ============================================
-# LOGGING
-# ============================================
 logging:
   level:
     root: INFO
     lavalink: INFO
-    
-  file:
-    path: ./logs/
-    max-size: 10MB
-    max-history: 3
-
-  logback:
-    rollingpolicy:
-      max-file-size: 10MB
-      max-history: 3
-      total-size-cap: 30MB
