@@ -2,17 +2,12 @@ server:
   port: ${PORT:-2333}
   address: 0.0.0.0
 
-# ============================================
-# PLUGINS - CRITICAL FOR SEARCH
-# ============================================
 lavalink:
   plugins:
-    # YouTube Plugin - REQUIRED for search
     - dependency: "dev.lavalink.youtube:youtube-plugin:1.16.0"
       repository: "https://maven.lavalink.dev/releases"
       snapshot: false
     
-    # LavaSrc Plugin
     - dependency: "com.github.topi314.lavasrc:lavasrc-plugin:4.8.0"
       repository: "https://maven.lavalink.dev/releases"
       snapshot: false
@@ -21,7 +16,7 @@ lavalink:
     password: ${LAVALINK_PASSWORD:your_super_strong_password_here}
     
     sources:
-      youtube: false        # MUST BE FALSE!
+      youtube: false        # MUST be false for plugin
       bandcamp: true
       soundcloud: true
       twitch: true
@@ -29,73 +24,69 @@ lavalink:
       http: true
       local: false
     
-    # CRITICAL FOR SEARCH - MUST BE TRUE!
-    youtubeSearchEnabled: true
-    soundcloudSearchEnabled: true
-    
-    # Performance settings
+    # Audio quality settings
     bufferDurationMs: 400
     frameBufferDurationMs: 2000
     youtubePlaylistLoadLimit: 5
     playerUpdateInterval: 5
+    youtubeSearchEnabled: true
+    soundcloudSearchEnabled: true
     gc-warnings: true
     trackStuckThresholdMs: 10000
     useSeekGhosting: true
     
-    # No rate limit for search
-    ratelimit:
-      ipBlocks: []
-      excludedIps: []
-      strategy: "RotateOnBan"
-      searchTriggersFail: false    # IMPORTANT: false
-      retryLimit: 5
+    # Audio codec settings (FIX untuk tidak ada suara)
+    audioCodecs:
+      - opus
+      - vorbis
+      - aac
+      - mp3
+      - flac
+    
+    # Filter configuration
+    filters:
+      volume: true
+      equalizer: true
+      karaoke: true
+      timescale: true
+      tremolo: true
+      vibrato: true
+      distortion: true
+      rotation: true
+      channelMix: true
+      lowPass: true
 
-# ============================================
-# YOUTUBE PLUGIN - SEARCH CONFIGURATION
-# ============================================
 plugins:
   youtube:
     enabled: true
-    allowSearch: true               # CRITICAL!
-    allowDirectVideoIds: true
+    allowSearch: true
+    allowDirectVideoIds: true        # FIX untuk YouTube URLs
     allowDirectPlaylistIds: true
     
-    # Use MUSIC client first for better search
+    # Process all YouTube URL formats
     clients:
-      - MUSIC                       # Best for search
-      - WEB                         # Fallback
-      - ANDROID_MUSIC              
-      - ANDROID
+      - MUSIC
+      - WEB  
+      - ANDROID_MUSIC
+      - WEB_EMBEDDED_PLAYER          # Untuk embedded links
       - TVHTML5_SIMPLY_EMBEDDED_PLAYER
     
-    # Search configuration
-    searchOptions:
-      maxResults: 10                # Return up to 10 results
-      searchType: "video"           # Search for videos
+    # URL handling
+    urlParsing:
+      enabled: true
+      parseShortUrls: true            # Support youtu.be
+      parseMusicUrls: true            # Support music.youtube.com
     
-    # Cache for better performance
     cache:
       enabled: true
       directory: /tmp/youtube-cache
       maximumSize: 100
       expireAfterAccess: 10m
-    
-    # Request options
-    requestOptions:
-      retryOptions:
-        maxAttempts: 3
-        initialBackoff: 1s
-        maxBackoff: 10s
-        backoffMultiplier: 2.0
 
-  # ============================================
-  # LAVASRC - ENHANCED SEARCH
-  # ============================================
   lavasrc:
-    # IMPORTANT: Providers for search
     providers:
-      - "ytsearch:%QUERY%"         # YouTube search
-      - "ytsearch:\"%ISRC%\""      # ISRC search
+      - "ytsearch:%QUERY%"
+      - "ytsearch:\"%ISRC%\""
     
     sources:
       spotify: true
@@ -115,21 +106,10 @@ plugins:
       mediaAPIToken: ""
       playlistLoadLimit: 5
       albumLoadLimit: 5
-    
-    # YouTube search via LavaSrc
-    youtube:
-      countryCode: "ID"
-      language: "id"
-
-metrics:
-  prometheus:
-    enabled: false
-
-sentry:
-  dsn: ""
 
 logging:
   level:
     root: INFO
     lavalink: INFO
-    dev.lavalink.youtube: DEBUG    # Debug YouTube untuk troubleshooting
+    dev.lavalink.youtube: DEBUG      # Debug untuk YouTube issues
+    com.sedmelluq.discord.lavaplayer: DEBUG  # Debug untuk audio issues
