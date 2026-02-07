@@ -3,20 +3,23 @@ FROM eclipse-temurin:17-jre-alpine
 WORKDIR /opt/Lavalink
 
 # Install dependencies
-RUN apk add --no-cache wget curl
+RUN apk add --no-cache wget curl ca-certificates
 
-# Download Lavalink
-RUN wget https://github.com/lavalink-devs/Lavalink/releases/download/4.0.5/Lavalink.jar
+# Download Lavalink versi terbaru
+RUN wget https://github.com/lavalink-devs/Lavalink/releases/download/4.0.8/Lavalink.jar
 
-# Copy config
+# Buat folder untuk plugins (auto-download by Lavalink)
+RUN mkdir -p plugins
+
+# Copy configuration
 COPY application.yml .
 
 # Expose port
 EXPOSE 2333
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=60s \
-  CMD curl -f http://localhost:2333/version || exit 1
+# Health check dengan authorization header
+HEALTHCHECK --interval=30s --timeout=10s --start-period=90s --retries=3 \
+  CMD curl -f -H "Authorization: ${LAVALINK_PASSWORD}" http://localhost:2333/version || exit 1
 
-# Run with memory limit
-CMD ["java", "-Xmx400M", "-Xms128M", "-jar", "Lavalink.jar"]
+# Run with optimized memory for Render free tier (512MB)
+CMD ["java", "-Xmx350M", "-Xms128M", "-Djdk.tls.client.protocols=TLSv1.2", "-jar", "Lavalink.jar"]
