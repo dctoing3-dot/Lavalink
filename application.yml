@@ -3,17 +3,17 @@ server:
   address: 0.0.0.0
 
 # ============================================
-# LAVALINK PLUGINS - YOUTUBE & LAVASRC
+# LAVALINK PLUGINS - VERSI TERBARU FEB 2026
 # ============================================
 lavalink:
   plugins:
-    # YouTube Plugin (WAJIB untuk YouTube support di v4)
-    - dependency: "dev.lavalink.youtube:youtube-plugin:1.11.4"
+    # YouTube Plugin - TERBARU v1.16.0
+    - dependency: "dev.lavalink.youtube:youtube-plugin:1.16.0"
       repository: "https://maven.lavalink.dev/releases"
       snapshot: false
     
-    # LavaSrc Plugin (Spotify, Deezer, Apple Music, dll)
-    - dependency: "com.github.topi314.lavasrc:lavasrc-plugin:4.3.0"
+    # LavaSrc Plugin - TERBARU v4.8.0
+    - dependency: "com.github.topi314.lavasrc:lavasrc-plugin:4.8.0"
       repository: "https://maven.lavalink.dev/releases"
       snapshot: false
 
@@ -37,17 +37,8 @@ lavalink:
     youtubeSearchEnabled: true
     soundcloudSearchEnabled: true
     gc-warnings: true
-    
-    # Track stuck threshold
     trackStuckThresholdMs: 10000
-    
-    # Use seekGhosting
     useSeekGhosting: true
-    
-    # YouTube rotation check
-    youtubeConfig:
-      email: ""
-      password: ""
     
     # Rate limit config
     ratelimit:
@@ -58,7 +49,7 @@ lavalink:
       retryLimit: 3
 
 # ============================================
-# PLUGIN CONFIGURATIONS
+# PLUGIN CONFIGURATIONS - UPDATED
 # ============================================
 plugins:
   # YouTube Plugin Configuration
@@ -68,19 +59,20 @@ plugins:
     allowDirectVideoIds: true
     allowDirectPlaylistIds: true
     
-    # Clients untuk fallback (penting!)
+    # Clients untuk fallback (IMPROVED di v1.16.0)
     clients:
       - MUSIC           # YouTube Music (recommended)
       - WEB             # YouTube Web
       - ANDROID_TESTSUITE  # Android client
-      - TVHTML5EMBEDDED    # TV client (untuk age-restricted)
+      - TVHTML5EMBEDDED    # TV client
     
     # OAuth untuk menghindari rate limit (opsional)
-    # oauth:
-    #   enabled: false
-    #   refreshToken: ""
+    oauth:
+      enabled: false
+      # refreshToken: ""
+      # skipInitialization: false
   
-  # LavaSrc Configuration (Spotify, Deezer, Apple Music)
+  # LavaSrc Configuration - UPDATED v4.8.0
   lavasrc:
     providers:
       - "ytsearch:\"%ISRC%\""   # Cari via ISRC code
@@ -94,31 +86,31 @@ plugins:
       flowerytts: false
       vkmusic: false
     
-    # Spotify Configuration (Gratis, tanpa credentials)
+    # Spotify Configuration (Tanpa credentials untuk basic)
     spotify:
       countryCode: "ID"
       playlistLoadLimit: 5
       albumLoadLimit: 5
-      
-      # Opsional - untuk menghindari rate limit
-      # clientId: "your_spotify_client_id"
-      # clientSecret: "your_spotify_client_secret"
+      # clientId: ""       # Opsional
+      # clientSecret: ""   # Opsional
+      # localFiles: false  # NEW in v4.8.0
     
     # Deezer Configuration
     deezer:
       countryCode: "ID"
-      # masterDecryptionKey: ""  # Opsional untuk HQ audio
+      # masterDecryptionKey: ""  # Opsional untuk HQ
     
     # Apple Music Configuration
     applemusic:
       countryCode: "ID"
-      mediaAPIToken: "your_apple_music_token_here_or_leave_empty"
+      mediaAPIToken: ""
       playlistLoadLimit: 5
       albumLoadLimit: 5
     
-    # Yandex Music (jika mau aktifkan)
-    # yandexmusic:
-    #   accessToken: ""
+    # YouTube Search (NEW in LavaSrc v4.8.0)
+    youtube:
+      countryCode: "ID"
+      language: "id"
 
 # ============================================
 # METRICS & MONITORING
@@ -129,13 +121,11 @@ metrics:
     endpoint: /metrics
 
 # ============================================
-# SENTRY (Error tracking - opsional)
+# SENTRY
 # ============================================
 sentry:
   dsn: ""
   environment: "production"
-  tags:
-    platform: "render"
 
 # ============================================
 # LOGGING
@@ -145,7 +135,6 @@ logging:
     root: INFO
     lavalink: INFO
     
-  # Log file configuration
   file:
     path: ./logs/
     max-size: 10MB
