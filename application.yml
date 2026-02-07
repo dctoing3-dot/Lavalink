@@ -3,189 +3,133 @@ server:
   address: 0.0.0.0
 
 # ============================================
-# LAVALINK CORE CONFIGURATION
+# PLUGINS - CRITICAL FOR SEARCH
 # ============================================
 lavalink:
-  # Plugin Configuration - UPDATED VERSIONS
   plugins:
-    # YouTube Plugin - Latest stable
+    # YouTube Plugin - REQUIRED for search
     - dependency: "dev.lavalink.youtube:youtube-plugin:1.16.0"
       repository: "https://maven.lavalink.dev/releases"
       snapshot: false
     
-    # LavaSrc Plugin - Latest for Spotify/Apple Music
+    # LavaSrc Plugin
     - dependency: "com.github.topi314.lavasrc:lavasrc-plugin:4.8.0"
       repository: "https://maven.lavalink.dev/releases"
       snapshot: false
 
   server:
-    # Authentication
     password: ${LAVALINK_PASSWORD:your_super_strong_password_here}
     
-    # Built-in sources configuration
     sources:
-      youtube: false      # MUST be false when using plugin
-      bandcamp: true      
+      youtube: false        # MUST BE FALSE!
+      bandcamp: true
       soundcloud: true
       twitch: true
       vimeo: true
       http: true
       local: false
     
-    # Performance optimization for Render free tier (512MB)
+    # CRITICAL FOR SEARCH - MUST BE TRUE!
+    youtubeSearchEnabled: true
+    soundcloudSearchEnabled: true
+    
+    # Performance settings
     bufferDurationMs: 400
     frameBufferDurationMs: 2000
     youtubePlaylistLoadLimit: 5
     playerUpdateInterval: 5
-    youtubeSearchEnabled: true
-    soundcloudSearchEnabled: true
     gc-warnings: true
     trackStuckThresholdMs: 10000
     useSeekGhosting: true
     
-    # Rate limiting configuration
+    # No rate limit for search
     ratelimit:
       ipBlocks: []
-      excludedIps: ["127.0.0.1", "::1"]
+      excludedIps: []
       strategy: "RotateOnBan"
-      searchTriggersFail: false
+      searchTriggersFail: false    # IMPORTANT: false
       retryLimit: 5
-    
-    # HTTP Configuration
-    httpConfig:
-      proxyHost: ""
-      proxyPort: 0
-      proxyUser: ""
-      proxyPassword: ""
 
 # ============================================
-# YOUTUBE PLUGIN CONFIGURATION - ENHANCED
+# YOUTUBE PLUGIN - SEARCH CONFIGURATION
 # ============================================
 plugins:
   youtube:
     enabled: true
-    allowSearch: true
+    allowSearch: true               # CRITICAL!
     allowDirectVideoIds: true
     allowDirectPlaylistIds: true
     
-    # Multiple clients for better reliability
+    # Use MUSIC client first for better search
     clients:
-      - MUSIC                          # YouTube Music (most stable)
-      - ANDROID_MUSIC                  # Android YouTube Music
-      - WEB                           # Web client
-      - ANDROID                       # Android app
-      - IOS                          # iOS app  
-      - TVHTML5_SIMPLY_EMBEDDED_PLAYER # TV client
-      - WEB_EMBEDDED_PLAYER          # Embedded player
-      - MEDIA_CONNECT                # Media Connect
+      - MUSIC                       # Best for search
+      - WEB                         # Fallback
+      - ANDROID_MUSIC              
+      - ANDROID
+      - TVHTML5_SIMPLY_EMBEDDED_PLAYER
     
-    # Cache configuration (helps with signature issues)
+    # Search configuration
+    searchOptions:
+      maxResults: 10                # Return up to 10 results
+      searchType: "video"           # Search for videos
+    
+    # Cache for better performance
     cache:
       enabled: true
       directory: /tmp/youtube-cache
       maximumSize: 100
       expireAfterAccess: 10m
     
-    # Request options for better reliability
+    # Request options
     requestOptions:
       retryOptions:
-        maxAttempts: 5
+        maxAttempts: 3
         initialBackoff: 1s
         maxBackoff: 10s
         backoffMultiplier: 2.0
-    
-    # OAuth configuration (optional - leave disabled for now)
-    oauth:
-      enabled: false
-      # refreshToken: ""
-      # skipInitialization: false
-    
-    # Rotation configuration for IP rotation
-    rotationConfig:
-      enabled: false
-      # ips: []
-      # strategy: "LoadBalance"
-      # searchTriggersFail: true
 
   # ============================================
-  # LAVASRC PLUGIN CONFIGURATION
+  # LAVASRC - ENHANCED SEARCH
   # ============================================
   lavasrc:
-    # Search providers priority
+    # IMPORTANT: Providers for search
     providers:
-      - "ytsearch:\"%ISRC%\""     # Search by ISRC code first
-      - "ytsearch:%QUERY%"         # Fallback to regular search
+      - "ytsearch:%QUERY%"         # YouTube search
+      - "ytsearch:\"%ISRC%\""      # ISRC search
     
-    # Enabled sources
     sources:
       spotify: true
       applemusic: true
-      deezer: false               # Disabled (requires master key)
+      deezer: false
       yandexmusic: false
       flowerytts: false
       vkmusic: false
-      jiosaavn: false
-      tidal: false
-      mixcloud: false
     
-    # Spotify Configuration
     spotify:
       countryCode: "ID"
       playlistLoadLimit: 5
       albumLoadLimit: 5
-      # Optional - add if you have Spotify API credentials
-      # clientId: ""
-      # clientSecret: ""
-      # spDc: ""              # For user playlists
-      
-    # Apple Music Configuration  
+    
     applemusic:
       countryCode: "ID"
-      mediaAPIToken: ""          # Optional - leave empty for basic
+      mediaAPIToken: ""
       playlistLoadLimit: 5
       albumLoadLimit: 5
     
-    # YouTube search config (for LavaSrc)
+    # YouTube search via LavaSrc
     youtube:
       countryCode: "ID"
       language: "id"
 
-# ============================================
-# METRICS & MONITORING
-# ============================================
 metrics:
   prometheus:
     enabled: false
-    endpoint: /metrics
 
-# ============================================
-# SENTRY ERROR TRACKING
-# ============================================
 sentry:
   dsn: ""
-  environment: "production"
-  tags:
-    platform: "render"
-    version: "4.0.8"
 
-# ============================================
-# LOGGING CONFIGURATION
-# ============================================
 logging:
   level:
     root: INFO
     lavalink: INFO
-    # Debug specific components if needed
-    # dev.lavalink.youtube: DEBUG
-    # com.github.topi314.lavasrc: DEBUG
-  
-  file:
-    path: ./logs/
-    max-size: 10MB
-    max-history: 3
-  
-  logback:
-    rollingpolicy:
-      max-file-size: 10MB
-      max-history: 3
-      total-size-cap: 30MB
+    dev.lavalink.youtube: DEBUG    # Debug YouTube untuk troubleshooting
