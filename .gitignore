@@ -1,0 +1,12 @@
+# Lavalink
+logs/
+plugins/*.jar
+application.yml.bak
+
+# Environment
+.env
+.env.local
+
+# System
+.DS_Store
+Thumbs.db
